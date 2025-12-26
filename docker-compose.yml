@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  pdf-generator:
+    build: .
+    container_name: pdf-generator
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - PORT=3000
+      - API_TOKEN=${API_TOKEN}
+    restart: unless-stopped
+    # Límites de recursos opcionales
+    deploy:
+      resources:
+        limits:
+          memory: 1G
