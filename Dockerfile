@@ -1,14 +1,16 @@
 FROM node:20-slim
 
-# Instalar dependencias de Puppeteer/Chromium
+# Instalar dependencias de Chromium
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
     fonts-noto-color-emoji \
+    libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
     libcups2 \
     libdbus-1-3 \
+    libdrm2 \
     libgbm1 \
     libgtk-3-0 \
     libnspr4 \
@@ -16,6 +18,8 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
+    libxfixes3 \
+    libxkbcommon0 \
     libxrandr2 \
     xdg-utils \
     --no-install-recommends \
@@ -31,7 +35,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependencias de producción
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Copiar código fuente
 COPY src ./src
@@ -39,10 +43,5 @@ COPY src ./src
 # Puerto del servicio
 EXPOSE 3000
 
-# Usuario no-root para seguridad
-RUN groupadd -r pptruser && useradd -r -g pptruser pptruser \
-    && chown -R pptruser:pptruser /app
-USER pptruser
-
-# Comando de inicio
+# Comando de inicio (ejecutar como root para evitar problemas de sandbox)
 CMD ["node", "src/index.js"]

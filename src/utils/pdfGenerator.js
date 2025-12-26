@@ -9,15 +9,31 @@ let browser = null;
 async function getBrowser() {
     if (!browser || !browser.connected) {
         console.log('🌐 Launching browser...');
+
+        // Detectar path de Chromium (Docker usa /usr/bin/chromium)
+        const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || null;
+
         browser = await puppeteer.launch({
             headless: 'new',
+            executablePath: executablePath,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-gpu',
                 '--disable-software-rasterizer',
-                '--single-process'
+                '--single-process',
+                '--no-zygote',
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-default-apps',
+                '--disable-sync',
+                '--disable-translate',
+                '--hide-scrollbars',
+                '--metrics-recording-only',
+                '--mute-audio',
+                '--no-first-run',
+                '--safebrowsing-disable-auto-update'
             ]
         });
         console.log('✅ Browser ready');
